@@ -7,5 +7,5 @@ with open("text_files/FavoriteMovies.txt") as FavMovies:
 
 with open("text_files/FavoriteMoviesupdated.txt", "w") as FavMovies1:
     for count in range(0,5):
-        FavMovies1.write(f"{lines[count]} is a movie I like.\n")
+        FavMovies1.write(f"{lines[count].rstrip()} is a movie I like.\n")
 
