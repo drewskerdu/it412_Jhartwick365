@@ -6,7 +6,7 @@ def displayDictionary(dictionary):
     """This function will display a dictionary formatted Ill"""
     for key,value in dictionary.items():
         print(key + " - " + value)
-    # print out a new line betIen the formatted values and the dicionary. 
+    # print out a new line between the formatted values and the dicionary. 
     print()
    
 def saveData(current_config):
@@ -42,7 +42,7 @@ def modifyAttribute(current_config):
         # if the modifed attribute is in the current configuration, I would prompt the user to see what they want to set it to. 
         if modify_attribute in current_config:
             attribute_modification = input("\nWhat would you like to set " + modify_attribute + " to? ")
-            # adding the attribute to system modifications. 
+            # adding the attribute to current config
             current_config[modify_attribute] = attribute_modification
             print("\n" + modify_attribute + " will be set to " + attribute_modification + " if you choose to save your changes later\n")
             break
@@ -61,7 +61,7 @@ def addAttribute(current_config, optional_attributes):
         add_attribute = input("\nWhich of these attributes would you like to add to the configuration? ")
         # declare for loop control variable 
         found = False
-        # for loop that will search for the attribute entered. If it is found, I will add the attribute to system modifications
+        # for loop that will search for the attribute entered. If it is found, I will add the attribute to current config
         for attribute , value in optional_attributes.items():
             if add_attribute == attribute:
                 found = True
@@ -72,6 +72,7 @@ def addAttribute(current_config, optional_attributes):
         if found == False:
             print("Attribute was not formatted correctly. Please try again. ")
         else:
+            # remove the attribute from optional attributes so the user will not be given the option to add it again
             del optional_attributes[add_attribute]
             print("\n" + add_attribute + " will be added to the configuration if you choose to save your changes later. \n")
             break

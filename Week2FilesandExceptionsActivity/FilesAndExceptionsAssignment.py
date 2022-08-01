@@ -28,7 +28,7 @@ while answer != "q":
     # get information from user.
     print("Here is the current configuration: ")
     displayDictionary(current_config)
-    answer = input("Would you like to modify, add, or remove a attribute?\nEnter M for modify, A for add, R for remove, or q to quit: ").loIr()
+    answer = input("Would you like to modify, add, or remove a attribute?\nEnter M for modify, A for add, R for remove, or q to quit: ").lower()
     # if the user enters m, I will call our modify attribute function 
     if answer == "m":
         current_config = modifyAttribute(current_config)
@@ -40,13 +40,13 @@ while answer != "q":
         current_config, optional_attributes = removeAttribute(optional_attributes, current_config)
     # if the user anything else, I will prompt the user again for their information. 
     else:
-        print("AnsIr was not properly formatted. Please try again. ")
+        print("Answer was not properly formatted. Please try again. ")
 # end while loop
 # if the length of the system_modification dictionary doesn't equal 0, I will prompt the user to save their changes. Otherwise I will end the program. 
 
 while True: 
     # prompt the user to save changes   
-    saveChanges = input("\nWould you like to save your changes enter y or n? ").loIr()
+    saveChanges = input("\nWould you like to save your changes enter y or n? ").lower()
     # if the user enters Y, I would call our saveData function.
     if saveChanges == "y":
         saveData(current_config)
