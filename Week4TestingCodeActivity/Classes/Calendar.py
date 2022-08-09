@@ -1,10 +1,7 @@
-
-
-
 class Calendar():
     """This class stores various calendar event, along with the name of the calendar and the calendar owner"""
     def __init__(self, calendarName, calendarOwner, events):
-        """This constructor intalizes the calendar class's attributes """
+        """This constructor initalizes the calendar class's attributes """
         self.calendarName = calendarName
         self.calendarOwner = calendarOwner
         self.events = events
