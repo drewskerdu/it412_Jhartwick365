@@ -2,7 +2,7 @@ from Classes.database_access import DB_Connect
 
 my_db = DB_Connect('root', '', 'python_projects')
 
-# my_db.executeQuery("INSERT INTO course_info (course_discipline, course_number, course_title) VALUES ('IT', '650', 'Software Principles')")
+#my_db.executeQuery("INSERT INTO course_info (course_discipline, course_number, course_title) VALUES ('IT', '650', 'Software Principles')")
 
 #my_db.executeQuery("UPDATE course_info SET letter_grade='A-', course_gpa='3.7' WHERE course_id ='2'")
 
