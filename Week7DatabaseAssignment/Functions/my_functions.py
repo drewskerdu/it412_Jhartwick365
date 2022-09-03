@@ -109,7 +109,7 @@ def showVehicles(car_db):
         print("Here are all the vehicles currenly in the database: ")
         # for loop that will print out all the records in the database
         for record in result:
-            # if the record  hasnt been deleted yet we will print it out. Otherwise, we will do nothinh 
+            # if the record  hasnt been deleted yet we will print it out. Otherwise, we will do nothing 
             if record["Deleted"] == "NO": 
                 print(f"\nRecord number: {record['record_number']} ")
                 print(f"Make: {record['vehicle_make']}")
