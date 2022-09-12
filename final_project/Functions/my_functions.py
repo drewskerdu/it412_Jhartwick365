@@ -100,24 +100,206 @@ def getCustomerDataDictionary(fileLocation=''):
                     customer_data.append({"first name" : first_name, "last name" : last_name, "company" : company, "address" : address, "city" : city, "state" : state, "zip code" : zip, "primary phone" : primary_phone, "secondary phone" : secondary_phone, "email" : email})    
             count += 1
     return customer_data
-def getNewFirstName():
+def getNewAddress():
+    """This function will return a valid employee address """
+    # while loop that will continue until the user enters a valid address
     while True:
+        # prompt user for address input, and then pass the result into validateAddress
+        address = input("Please enter the address on the record: ")
+        address_ok = validateAddress(address)
+        # if validateAddress comes back as false or is blank, we will say that it isnt properly formatted. Otherwise, we will return the address. 
+        if address_ok == False or address == "":
+            print("Address was not properly formatted. Please try again. ")
+        else:
+            return address
+def getNewCity():
+    """This function will return a valid city"""
+    # while loop that will continue until the user enters a valid city
+    while True:
+        # prompt user for city input, and then pass the result into validateCity
+        city = input("Please enter the city on the record: ").lower()
+        city_ok = validateCity(city)
+        # if validateCity comes back as false or is blank, we will say that it isnt properly formatted. Otherwise, we will return the city. 
+        if city == "" or city_ok == False:
+            print("City was not properly formatted. Please try again. ")
+        else:
+            return city
+        
+def getNewCompanyName():
+    """This function will return the company name"""
+    company_name = input("Please enter the company name on the record: (optional) Press enter to leave blank: ")
+    return company_name
+def getNewEmailAddress():
+    """This function will return a valid email address"""
+    # while loop that will continue until the user enters a valid email address
+    while True:
+        # prompt user for email address input, and then pass the result into validateEmail
+        email_address = input("Please enter the email address on the record: (optional) Press enter to leave blank: ")
+        email_ok = validateEmail(email_address)
+        # if validateEmail comes back as True, we will return the email address. Otherwise, we will say that the email address was not properly formatted 
+        if email_ok == True:
+            return email_address
+        else:
+            print("Email address was not properly formatted. Please try again. ")
+def getNewFirstName():
+    """This function will return a valid first name"""
+    # while loop that will continue until the user enters a valid email name
+    while True:
+        # prompt user for first name input, and then pass the result into validateName
         first_name = input("Please enter the first name on the record: ").lower()
         f_name_ok = validateFirstOrLastName(first_name)
+        # if validateName comes back as True, we will return the first name. Otherwise, we will say that the name was not properly formatted 
         if f_name_ok == True:
-            break
+            return first_name.title()
         else:
             print("First name was not properly formatted. Please try again. ")
+def getNewLastName():
+    """This function will return a valid last name"""
+    # while loop that will continue until the user enters a valid name 
+    while True:
+        # prompt user for last name input, and then pass the result into validateName
+        last_name = input("Please enter the last name on the record: ").lower()
+        l_name_ok = validateFirstOrLastName(last_name)
+        # if validateName comes back as True, we will return the last name. Otherwise, we will say that the name was not properly formatted 
+        if l_name_ok == True:
+            return last_name.title()
+        else:
+            print("Last name was not properly formatted. Please try again. ")
+def getNewPhoneNumber(p_type):
+    """This function will return a valid phone number"""
+    # while loop that will continue until the user enters a valid email phone number
+    while True:
+        # if p_type is p for primary phone, we will prompt the user for primary phone input. Otherwise, we will prompt the user for seondary phone input. 
+        if p_type == "p":
+            phone_number = input("Please enter the primary phone number on the record in the format of NNN-NNN-NNNN: ")    
+        else:
+            phone_number = input("Please enter the secondary phone number on the record in the format of NNN-NNN-NNNN: (optional) Press enter to leave blank ")
+        # then we will pass the phone number into validate phone number. 
+        phone_ok = validatePhoneNumber(phone_number)
+        # if p_type is P and the phone number is blank, we will say that it wasnt properly formatted
+        if p_type == "p" and phone_number == "":
+            print("Phone number was not properly formatted. Please try again.")
+        # if phone_ok come back as true we will return the phone number. Otherwise, we will say that the phone number was not properly formatted. 
+        elif phone_ok == True:
+            return phone_number
+        else:
+            print("Phone number was not properly formatted. Please try again. ")
+    
+def getNewState():
+    """This function will return a valid state"""
+        # while loop that will continue until the user enters a valid state
+    while True:
+        # prompt user for state input, and then pass the result into validateState
+        state = input("Please enter the state on the record in the form of 2 digits: ex. MI: ")
+        state_ok = validateState(state)
+        # if validateState comes back as false, we will say that the state was not properly formatted. Otherwise, we will return the state  
+        if state_ok == False:
+            print("State entered was not properly formatted. Please try again. ")  
+        else:
+            return state.upper()
+def getNewZipCode():
+    """This function will return a valid zip code"""
+    # while loop that will continue until the user enters a valid zip code
+    while True:
+        # prompt user for zip code input, and then pass the result into validateZipCode
+        zip_code = input("Please enter the zip code on the record in the form of 4 or 5 digits: ex. 1234 or 12345: ")
+        zip_ok = validateZipCode(zip_code)
+        # if validateZipCode comes back as false, we will say that the zip code was not properly formatted. Otherwise, we will return the zip code
+        if zip_ok == False:
+            print("Zip code was not properly formatted. Please try again. ")
+        else:
+            return zip_code
+
+def validateAddress(address):
+    """This function will validate the address entered"""
+    # declare bad characters list 
+    bad_chars = ["!", '"', "'", "@", "$", "%", "^", "&", "*", "_",  "=", "+", "<", ">",  "?", ";", "[", "]", "{", "}"]
+    # declare control variable and for loop
+    # loop through the bad characters list. If the character appears in address we will say that address_ok is false and return it. 
+    address_ok = True
+    for character in bad_chars:
+        if character in address:
+            address_ok = False
+            break
+    return address_ok
+def validateCity(city):
+    """This function will validate the city entered"""
+    # declare allowed  characters list
+    allowed_characters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z', "'", ' ']
+    # declare control variable and for loop
+    # loop through the allowed characters list. If the character doesn't appear in city, we will say that city_ok is false and return it.
+    city_ok = True
+    for character in city:
+        if character not in allowed_characters:
+            city_ok = False
+            break
+    return city_ok
+def validateEmail(email):
+    """This function will validate the email address entered"""
+    # declare bad characters list 
+    bad_chars = ['!', '"', "'", '#', '$', '%', '^', '&', '*', '(', ')',  '=', '+', ',', '<', '>', '/', '?', ';', ':', '[', ']', '{', '}', '\\', " "]
+    # declare control variable and for loop
+    # loop through the characters in email If the character appears in the bad_chars list we will say that email_ok is false and return it. 
+    email_ok = True
+    for character in email:
+        if character in bad_chars:
+            email_ok = False
+            break
+    return email_ok
+
 def validateFirstOrLastName(name):
+    """This function will validate a first or last name"""
+    # declare allowed characters list
     allowed_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', "'", "-", " "]
+    # declare control variable and for loop
+    # loop through the allowed characters list. If the character appears in name, we will say that city_ok is true  and return it.
     name_ok = False
     for character in allowed_characters:
         if character in name:
             name_ok = True
-
-    return name_ok 
+            break
+    return name_ok
+def validatePhoneNumber(phone_number):
+    """This function will validate the phone number entered"""
+    # declare allowed characters list
+    allowed_chars = ["0","1","2","3","4","5","6","7","8","9","0", "-"]
+    # declare control variable and for loop
+    # loop through the phone number. If the character appears in allowed chars, we will say that phone_ok is true and return it.
+    phone_ok = True
+    for character in phone_number:
+        if character not in allowed_chars:
+            phone_ok = False
+            break
+    return phone_ok
+def validateRecordinCrm(db_conn, primary_phone):
+    # call executeSelectQuery function that will select all the customer records and store it in result
+    result = db_conn.executeSelectQuery("SELECT * FROM crm_data")
+    record_ok = False
+    # declare for loop. For every record in result. If the record_number matches the user input, then record_ok equals true and return it
+    for record in result:
+        if record["primary_phone"] == primary_phone:
+            record_ok = True
+            break
+    return record_ok
+def validateState(state):
+    """This function will validate the state entered"""
+    # set state_ok to false
+    state_ok = False
+    # if state is composed of alpha chars and the length of state if 2 characters we will return true. 
+    if state.isalpha() and len(state) == 2:
+        state_ok = True
+    return state_ok
+def validateZipCode(zip):
+    """This function will validate the zip code entered"""
+    # set zip_ok to false
+    zip_ok = False
+    # if zip is composed of digits 0-9 and the length of zip is either 4 of 5 we will return true
+    if zip.isdigit() and (len(zip) == 4 or len(zip) == 5):
+        zip_ok = True
+    return zip_ok
 
 def showCrm_dataDatabaseEntries(db_conn):
+    """This function will show the data in the crm_data table. """
      # select all the entries from the crm_data table and store it in result 
     result = db_conn.executeSelectQuery("SELECT * FROM crm_data")
     # if there are no entries in result, we will say that there are no records in the database. They can press A to add a record or I to import data from a file. 

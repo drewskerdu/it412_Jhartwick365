@@ -1,5 +1,6 @@
 
 # import my functions, classes json, and backup files
+
 from Functions.my_functions import *
 from Classes.database_access import *
 import json
@@ -33,6 +34,7 @@ while True:
     print("Press S to show data currenly in a database")
     print("Press A to add a record to the databases. ")
     print("Press E to edit a record currenly in a database. ")
+    print("Press R to remove a current record in a database. ")
     print("Press Q to quit the program. ")
     # store the answer the user provides in the variable answer 
     answer = input().lower()
@@ -83,11 +85,151 @@ while True:
             # if the user entered anything other than C or M we will say that it wasnt formatted properly. 
             else:
                 print("Your database choice wasn't formatted properly. Please try again. ")
+    # or if the answer is A we will prompt them to add a record to the databases
     elif answer == "a":
         print("You selected to add a record to our database. We will now prompt you for all the fields")
+        # call the appropiate functions that will prompt the user for the various fields
         first_name = getNewFirstName()
-        
+        last_name = getNewLastName()
+        company_name = getNewCompanyName()
+        address = getNewAddress()
+        city = getNewCity()
+        state = getNewState()
+        zip_code = getNewZipCode()
+        p_type = "p"
+        primary_phone = getNewPhoneNumber(p_type)
+        p_type = "s"
+        secondary_phone = getNewPhoneNumber(p_type)
+        email = getNewEmailAddress()
+        # start adding the records to the databases 
+        # if the company name was left blank, we wont include it in our database query
+        if company_name == "":
+            db_conn.executeQuery(f"INSERT INTO crm_data (f_name, l_name, Address, city, state, zip, primary_phone,secondary_phone, email_address) VALUES ('{first_name}','{last_name}','{address}','{city}','{state}','{zip_code}','{primary_phone}','{secondary_phone}','{email}')")
+            db_conn.executeQuery(f"INSERT INTO mailings (name, address) VALUES ('{first_name} {last_name}','{address}')")
+            db_conn.conn.commit()
+        # or if the company name and the secondary phone was left blank, we wont include it in our database query. 
+        elif company_name == "" and secondary_phone == "":
+            db_conn.executeQuery(f"INSERT INTO crm_data (f_name, l_name, Address, city, state, zip, primary_phone, email_address) VALUES ('{first_name}','{last_name}','{address}','{city}','{state}','{zip_code}','{primary_phone}','{email}')")
+            db_conn.executeQuery(f"INSERT INTO mailings (name, company, address) VALUES ('{first_name} {last_name}','{company_name}','{address}')")
+            db_conn.conn.commit()
+        # or if the company name, secondary phone, and email were left blank, we wont include it in our database query. 
+        elif company_name == "" and secondary_phone == "" and email == "":
+            db_conn.executeQuery(f"INSERT INTO crm_data (f_name, l_name, Address, city, state, zip, primary_phone) VALUES ('{first_name}','{last_name}','{address}','{city}','{state}','{zip_code}','{primary_phone}')")
+            db_conn.executeQuery(f"INSERT INTO mailings (name, company, address) VALUES ('{first_name} {last_name}','{company_name}','{address}')")
+            db_conn.conn.commit()
+        # or if secondary phone and email were left blank, we wont include it in our database query. 
+        elif secondary_phone == "" and email == "":
+            db_conn.executeQuery(f"INSERT INTO crm_data (f_name, l_name, Address, city, state, zip, company, primary_phone) VALUES ('{first_name}','{last_name}','{address}','{city}','{state}','{zip_code}','{company_name}','{primary_phone}')")
+            db_conn.executeQuery(f"INSERT INTO mailings (name, company, address) VALUES ('{first_name} {last_name}','{company_name}','{address}')")
+            db_conn.conn.commit()
+        # or if the secondary phone was left blank, we wont include it in our database query. 
+        elif secondary_phone == "":
+            db_conn.executeQuery(f"INSERT INTO crm_data (f_name, l_name, Address, city, state, zip, company, primary_phone, email_address) VALUES ('{first_name}','{last_name}','{address}','{city}','{state}','{zip_code}','{company_name}','{primary_phone}','{email}')")
+            db_conn.executeQuery(f"INSERT INTO mailings (name, company, address) VALUES ('{first_name} {last_name}','{company_name}','{address}')")
+            db_conn.conn.commit()
+        # or if the email was left blank, we wont include it in our database query. 
+        elif email == "":
+            db_conn.executeQuery(f"INSERT INTO crm_data (f_name, l_name, Address, city, state, zip, company, primary_phone, secondary_phone) VALUES ('{first_name}','{last_name}','{address}','{city}','{state}','{zip_code}',{company_name}'{primary_phone}','{secondary_phone}')")
+            db_conn.executeQuery(f"INSERT INTO mailings (name, company, address) VALUES ('{first_name} {last_name}','{company_name}','{address}')")
+            db_conn.conn.commit()
+        # or if the user entered everything, we will include it in our database. 
+        else:
+            db_conn.executeQuery(f"INSERT INTO crm_data (f_name, l_name, Address, city, state, zip, company, primary_phone, secondary_phone, email) VALUES ('{first_name}','{last_name}','{address}','{city}','{state}','{zip_code}',{company_name}'{primary_phone}','{secondary_phone}','{email}')")
+            db_conn.executeQuery(f"INSERT INTO mailings (name, company, address) VALUES ('{first_name} {last_name}','{company_name}','{address}')")
+            db_conn.conn.commit()
+        # tell the user that the record was sucessfully added too our databases 
+        print("This record was sucessfully added to our databases. Returning to main menu..... ")
+    # or if the user entered E we will prompt them for the various edit inputs
     elif answer == "e":
+        # while loop that will continue until the user enters a valid database to modofy
+        while True:
+            # prompt the user for which database they woould like to modify data from 
+            databaseChoice = input("Which database would you like to modify the record from? Press C for crm_data or Press M for mailings: ").lower()
+            # If the user entered C or M, that is a valid choice and therefore we will break. 
+            # Otherwise we will say that the choice wasnt formatted properly 
+            if databaseChoice == "c" or databaseChoice == "m":
+                break
+            else:
+                print("Your choice of databases was not properly formatted. Please try again. ")
+        # If the user entered C for crm_data, we will prompt them for the various fields required to modify a record. 
+        if databaseChoice == "c":
+            # while loop that will continue until the user enters a valid phone number on the record to modify 
+            while True:
+                # prompt user for phone input
+                phone_record = input("Please enter the primary phone number of the record you would like to modify: ")
+                # call validateRecord function that will see if the phon number exists on a record. 
+                record_ok = validateRecordinCrm(db_conn, phone_record)
+                # if it comes back as true we will break. Otherwise, we will say that the phone number  was not properly formatted. 
+                if record_ok == True:
+                    break
+                else:
+                    print("Phone number was not properly formatted. Please try again. ")
+            # while loop that will continue until the user enters a valid field to modify
+            while True: 
+                # prompt user for the field they would like to modify
+                print("Please enter the field you would like to modify: ")
+                field_choice = input("Press F for first name, L for last name, A for address, C for Company, P for primary phone, S for secondary phone or E for email address:  ").lower()
+                # if the field choice is valid, we will break. Otherwise, we will say that the choice of field was not properly formatted. 
+                if field_choice == "f" or field_choice == "l" or field_choice == "a" or field_choice == "c" or field_choice == "p" or field_choice == "s" or field_choice == "e":
+                    break
+                else:
+                    print("Youe choice of field was not properly formatted. Please try again. ")
+            # if the field choice was F, we will call the first name function and then update the record in crm_data
+            if field_choice == "f":
+                print("You have chosen to modify the first name. ")
+                first_name = getNewFirstName()
+                db_conn.executeQuery(f"UPDATE crm_data SET f_name='{first_name}' WHERE primary_phone='{phone_record}'")
+                db_conn.conn.commit()
+            # if the field choice was L, we will call the last name function and then update the record in crm_data
+            elif field_choice == "l":
+                print("You have chosen to modify the last name. ")
+                last_name = getNewLastName()
+                db_conn.executeQuery(f"UPDATE crm_data SET l_name='{last_name}' WHERE primary_phone='{phone_record}'")
+                db_conn.conn.commit()
+            # if the field choice was A, we will call the Address, City, State and Zip function and then update the record in crm_data
+            elif field_choice == "a":
+                print("You have chosen to modify the address. We will now prompt you for the various address fields: ")
+                address = getNewAddress()
+                city = getNewCity()
+                state = getNewState()
+                zip_code = getNewZipCode()
+                db_conn.executeQuery(f"UPDATE crm_data SET Address='{address}' WHERE primary_phone='{phone_record}'")
+                db_conn.executeQuery(f"UPDATE crm_data SET city='{city}' WHERE primary_phone='{phone_record}'")
+                db_conn.executeQuery(f"UPDATE crm_data SET state='{state}' WHERE primary_phone='{phone_record}'")
+                db_conn.executeQuery(f"UPDATE crm_data SET zip='{zip_code}' WHERE primary_phone='{phone_record}'")
+                db_conn.conn.commit()
+            # if the field choice was C, we will call the company function and then update the record in crm_data
+            elif field_choice == "c":
+                print("You have chosen to modify the company name. ")
+                company_name = getNewCompanyName()
+                db_conn.executeQuery(f"UPDATE crm_data SET company='{company_name}' WHERE primary_phone='{phone_record}'")
+                db_conn.conn.commit()
+            # if the field choice was P, we will call the phone number function and then update the record in crm_data
+            elif field_choice == "p":
+                print("You have selected to modify the primary phone number. ")
+                # set p_type to p for primary and then pass the value into the phone number function
+                p_type = "p"
+                primary_phone = getNewPhoneNumber(p_type)
+                db_conn.executeQuery(f"UPDATE crm_data SET primary_phone='{primary_phone}' WHERE primary_phone='{phone_record}'")
+                db_conn.conn.commit()
+            # if the field choice was S, we will call the phone number function and then update the record in crm_data
+            elif field_choice == "s":
+                print("You have selected to modify the secondary phone number. ")
+                # set p_type to s for secondary and then pass the value into the phone number function
+                p_type = "s"
+                secondary_phone = getNewPhoneNumber(p_type)
+                db_conn.executeQuery(f"UPDATE crm_data SET secondary_phone='{secondary_phone}' WHERE primary_phone='{phone_record}'")
+                db_conn.conn.commit()
+            # if the field choice was E, we will call the email address function and then update the record in crm_data
+            elif field_choice == "e":
+                print("You have selected to modify the email address. ")
+                email = getNewEmailAddress()
+                db_conn.executeQuery(f"UPDATE crm_data SET email_address='{email}' WHERE primary_phone='{phone_record}'")
+                db_conn.conn.commit()
+        elif databaseChoice == "m":
+            pass
+        print("This database record was sucessfully modifed. Returning to main menu......")
+    elif answer == "r":
         pass
     elif answer == "q":
         print("Goodbye! Have a great day!")
