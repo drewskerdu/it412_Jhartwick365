@@ -21,6 +21,8 @@ def addDataToBothDatabases(customer_data, db_conn):
         db_conn.executeQuery(f"INSERT INTO mailings (name, company, address) VALUES ('{customer_data[count]['first name']} {customer_data[count]['last name']}','{customer_data[count]['company']}','{customer_data[count]['address']}')")
         db_conn.conn.commit()
         count += 1
+
+    
 def getCustomerDataDictionary(fileLocation=''):
     """This function will generate the customer_data dictionary based on either a data file or the customer_export.txt"""
     # if the fileLocation attribute was not provided, we will assume that the user needs to import the data from the customer_export.txt file. 
@@ -253,10 +255,10 @@ def validateFirstOrLastName(name):
     allowed_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', "'", "-", " "]
     # declare control variable and for loop
     # loop through the allowed characters list. If the character appears in name, we will say that city_ok is true  and return it.
-    name_ok = False
-    for character in allowed_characters:
-        if character in name:
-            name_ok = True
+    name_ok = True
+    for character in name:
+        if character not in allowed_characters:
+            name_ok = False
             break
     return name_ok
 def validatePhoneNumber(phone_number):
@@ -272,12 +274,23 @@ def validatePhoneNumber(phone_number):
             break
     return phone_ok
 def validateRecordinCrm(db_conn, primary_phone):
+    """This function will look for a record in the crm_data database based on the phone number entered"""
     # call executeSelectQuery function that will select all the customer records and store it in result
     result = db_conn.executeSelectQuery("SELECT * FROM crm_data")
     record_ok = False
     # declare for loop. For every record in result. If the record_number matches the user input, then record_ok equals true and return it
     for record in result:
         if record["primary_phone"] == primary_phone:
+            record_ok = True
+            break
+    return record_ok
+def validateRecordInMailings(record_name, db_conn):
+    """This function will look for a record in the mailings database based on the name entered"""
+    # call executeSelectQuery function that will select all the customer records and store it in result
+    result = db_conn.executeSelectQuery("SELECT * FROM mailings")
+    record_ok = False
+    for record in result:
+        if record["name"] == record_name:
             record_ok = True
             break
     return record_ok
@@ -355,7 +368,6 @@ def writeCustomerDataCSV(customerData):
             else:
                 # if count doesnt equal 0 we will just write the entry. 
                 csvObj.write(f"{customerData[count]['first name']},{customerData[count]['last name']},{customerData[count]['company']},{customerData[count]['address']},{customerData[count]['city']},{customerData[count]['state']},{customerData[count]['zip code']},{customerData[count]['primary phone']}, {customerData[count]['secondary phone']}, {customerData[count]['email']}\n")
-
             count += 1
 
                 

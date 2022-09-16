@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 04, 2022 at 01:30 AM
+-- Generation Time: Sep 17, 2022 at 12:50 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `mailings` (
   `mail_id` bigint(20) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `company` varchar(50) NOT NULL,
+  `company` varchar(50) DEFAULT NULL,
   `address` varchar(50) NOT NULL,
   `Deleted` varchar(10) NOT NULL DEFAULT 'NO'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -1,6 +1,7 @@
 
 # import my functions, classes json, and backup files
 
+from turtle import title
 from Functions.my_functions import *
 from Classes.database_access import *
 import json
@@ -157,7 +158,7 @@ while True:
             while True:
                 # prompt user for phone input
                 phone_record = input("Please enter the primary phone number of the record you would like to modify: ")
-                # call validateRecord function that will see if the phon number exists on a record. 
+                # call validateRecord function that will see if the phone number exists on a record. 
                 record_ok = validateRecordinCrm(db_conn, phone_record)
                 # if it comes back as true we will break. Otherwise, we will say that the phone number  was not properly formatted. 
                 if record_ok == True:
@@ -226,13 +227,130 @@ while True:
                 email = getNewEmailAddress()
                 db_conn.executeQuery(f"UPDATE crm_data SET email_address='{email}' WHERE primary_phone='{phone_record}'")
                 db_conn.conn.commit()
+        # or if the user entered M for the mailings database, we will prompt them for the varioous fields to modify a field. 
         elif databaseChoice == "m":
-            pass
+            # while loop that will continue until the user entered a valid record name to modify 
+            while True: 
+                # prompt the user for the record name and pass pass it into our validation function 
+                record_name = input("You have chosen to modify a record in the mailings database. Please enter the first and last name of the record you would like to modify:  ").title()
+                record_ok = validateRecordInMailings(record_name, db_conn)
+                # if the validation funtion comes back as true we will break. Otherwise, we will say that the record was not properly formatted and prompt the user again. 
+                if record_ok == True:
+                    break
+                else:
+                    print("The name on the record wasn't properly formatted. Please try again.")
+            # while loop that will continue until the user enters a valid field to modify 
+            while True:
+                # prompt the user for the field to modify
+                print("Please enter the field you would like to modify: ")
+                field_choice = input("Entr N for the name, A for the address, or c for the company name: ").lower()
+                # if the field entered is N, A or C, we will break. Otherwise, we will say that the field wasnt properly formatted and prompt them again. 
+                if field_choice == "n" or field_choice == "a" or field_choice == "c":
+                    break
+                else:
+                    print("Your choice of fields was not properly formatted. Please try again. ")
+            # if the field choice is N for name, we will call the name functions and update the mailings table based on the name entered 
+            if field_choice == "n":
+                first_name = getNewFirstName()
+                last_name = getNewLastName()
+                db_conn.executeQuery(f"UPDATE mailings SET name='{first_name} {last_name}' WHERE name='{record_name}'")
+                db_conn.conn.commit()
+            # if the field choice is A for address, we will call the address functions and update the mailings table based on the name previously entered. 
+            elif field_choice == "a":
+                address = getNewAddress()
+                db_conn.executeQuery(f"UPDATE mailings SET address='{address}' WHERE name='{record_name}'")
+                db_conn.conn.commit()
+            # if the field choice is C for company name, we will call the company name functions and update the mailings table based on the name previously entered. 
+            elif field_choice == "c":
+                company_name = getNewCompanyName()
+                db_conn.executeQuery(f"UPDATE mailings SET company='{company_name}' WHERE name='{record_name}'")
+                db_conn.conn.commit()
+        # tell the user that the record was sucessfully modifed 
         print("This database record was sucessfully modifed. Returning to main menu......")
+    # if the user entered R for remove, we will prompt them for the various fields required to remove a record 
     elif answer == "r":
-        pass
+        # whil loop that will continue until the user enters a valid database to remove 
+        while True:
+            # prompt the user for a database to remove a record from
+            databaseChoice = input("Please enter the database you would like to remove the record from: Press c for crm_data or m for mailings: ").lower()
+            # if the user entered c oor m we will break. Otherwise, we will say that your choice of databases was not properly formatted and prompt them again. 
+            if databaseChoice == "c" or databaseChoice == "m":
+                break
+            else:
+                print("Your choice of databases was not properly formatted. Please try again. ")
+        # if the user entered C for crm_data database
+        if databaseChoice == "c":
+            # while loop that will continue until the user enters a valid phone number on the record to remove 
+            while True:
+                # prompt user for phone input
+                phone_record = input("Please enter the primary phone number of the record you would like to remove: ")
+                # call validateRecord function that will see if the phone number exists on a record. 
+                record_ok = validateRecordinCrm(db_conn, phone_record)
+                # if it comes back as true we will break. Otherwise, we will say that the phone number was not properly formatted. 
+                if record_ok == True:
+                    break
+                else:
+                    print("Phone number was not properly formatted or doesn't exist. Please try again. ")
+            # select the record from the crm database and store it in the variable record
+            record = db_conn.executeSelectQuery(f"SELECT * FROM crm_data WHERE primary_phone='{phone_record}'")
+            # print out the record
+            print(f"\nCrm id: {record[0]['crm_id']}\tFirst Name: {record[0]['f_name']}\tLast Name: {record[0]['l_name']}\tAddress: {record[0]['Address']}\tCity: {record[0]['city']}\tState: {record[0]['state']}\tZip Code: {record[0]['zip']}\nPrimary Phone: {record[0]['primary_phone']}\tSecondary Phone: {record[0]['secondary_phone']}\tEmail Address: {record[0]['email_address']}")
+            print()
+            # declare user confirm while loop that will continue until the user enters Y to remove the record or N to keep the record 
+            while True: 
+                # ask the user if they want to keep the record or remove the record
+                userConfirm = input("Are you sure you want to remove this record? This can only be undone by contacting the database administrator. Press Y to remove this record or press N t keep the record: ").lower()
+                # if they chose Y to remove the record, we will update the deleted field to yes. 
+                if userConfirm == "y":
+                    db_conn.executeQuery(f"UPDATE crm_data SET Deleted='YES' WHERE primary_phone='{phone_record}'")
+                    db_conn.conn.commit()
+                    print("This record was sucessfully deleted. Returning to main menu......")
+                    break
+                # if they chose N to keep the record, we will tell tell the user that the record will be kept on file. 
+                elif userConfirm == "n":
+                    print("This record will be kept on file. Returning to main menu.....")
+                    break
+                # if the user didnt enter Y or N, we will say that the answer was not properly formatted.  
+                else:
+                    print("Your answer was not properly formatted. Please try again. ")
+        # or if the user entered m to remove a recoord from the mailings database
+        elif databaseChoice == "m":
+            # while loop that will continue until the user enters a valid record to remove. 
+            while True:
+                # prompt the user for the first and last name on the record to remove  
+                record_name = input("Please enter the first and last name of the record you would like to modify:  ").title()
+                # pass record_name into our validate record in the mailings database
+                record_ok = validateRecordInMailings(record_name, db_conn)
+                # if it comes back as true, we will break. Otherwise, we will say that the name on the record was not properly formatted. 
+                if record_ok == True:
+                    break
+                else:
+                    print("The name on the record was not properly formatted. Please try again. ")
+            # select the record that has the first and last name entered by the user 
+            record = db_conn.executeSelectQuery(f"SELECT * FROM mailings WHERE name='{record_name}'")
+            # print out the record the user specifed 
+            print(f"Mail id: {record[0]['mail_id']}\tName: {record[0]['name']}\tCompany: {record[0]['company']}\tAddress: {record[0]['address']}\n ")
+            # while loop that will continue until the user enters Y to remove the record or N to keep the record 
+            while True: 
+                # prompt the user for the confirm input
+                userConfirm = input("Are you sure you want to remove this record? This can only be undone by contacting the database administrator. Press Y to remove the record or N to keep the record ")
+                # if the user entered Y to remove the record, we will set deleted to YES and break out of the loop. 
+                if userConfirm == "y":
+                    db_conn.executeQuery(f"UPDATE mailings SET Deleted='YES' WHERE name='{record_name}'")
+                    db_conn.conn.commit()
+                    print("This record was sucessfully deleted. Returning to main menu......")
+                    break
+                # if the user entered N to keep the record, we will tell the user that the record will be kept on file. 
+                elif userConfirm == "n":
+                    print("This record will be kept on file. Returning to main menu.....")
+                    break 
+                # if the user entered anything else, we will say that that answer was not properly formatted. 
+                else:
+                    print("Your answer was not properly formatted. Please try again. ")
+    # if the user entered Q, we will say goodbye and break out of the loop 
     elif answer == "q":
         print("Goodbye! Have a great day!")
         break
+    # if the user entered anything else, we will say that the answer was not properly formated and prompt them again. 
     else:
         print("Answer was not properly formatted. Please try again. ")
